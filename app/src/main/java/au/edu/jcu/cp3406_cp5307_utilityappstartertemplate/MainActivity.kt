@@ -1,5 +1,7 @@
 package au.edu.jcu.cp3406_cp5307_utilityappstartertemplate
 
+import androidx.lifecycle.viewmodel.compose.viewModel
+import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.viewmodel.HydroTrackViewModel
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -52,6 +54,7 @@ fun UtilityAppPreview() {
 
 @Composable
 fun UtilityApp() {
+    val hydroTrackViewModel: HydroTrackViewModel = viewModel()
     var selectedTab by remember { mutableStateOf("Utility") }
 
     Scaffold(
@@ -74,15 +77,15 @@ fun UtilityApp() {
     ) { innerPadding ->
         Box(modifier = Modifier.padding(innerPadding)) {
             when (selectedTab) {
-                "Utility" -> UtilityScreen()
-                "Settings" -> SettingsScreen()
+                "Utility" -> UtilityScreen(viewModel = hydroTrackViewModel)
+                "Settings" -> SettingsScreen(viewModel = hydroTrackViewModel)
             }
         }
     }
 }
 
 @Composable
-fun UtilityScreen() {
+fun UtilityScreen(viewModel: HydroTrackViewModel) {
     var counter by remember { mutableIntStateOf(0) }
 
     Column(
@@ -101,7 +104,7 @@ fun UtilityScreen() {
 }
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(viewModel: HydroTrackViewModel) {
     Column(
         Modifier
             .fillMaxSize()
