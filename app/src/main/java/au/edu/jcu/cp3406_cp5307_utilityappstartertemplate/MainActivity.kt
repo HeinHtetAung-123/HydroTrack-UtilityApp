@@ -290,6 +290,61 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
+                    text = "Quick Add Buttons",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    text = "Enter values in ml for amounts like 250 or 500. Enter litres for values like 1 or 1.5.",
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedTextField(
+                        value = uiState.quickAddOneText,
+                        onValueChange = { viewModel.updateQuickAddAmount(0, it) },
+                        label = { Text("Button 1") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.quickAddTwoText,
+                        onValueChange = { viewModel.updateQuickAddAmount(1, it) },
+                        label = { Text("Button 2") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    OutlinedTextField(
+                        value = uiState.quickAddThreeText,
+                        onValueChange = { viewModel.updateQuickAddAmount(2, it) },
+                        label = { Text("Button 3") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.weight(1f)
+                    )
+                }
+
+                Button(
+                    onClick = { viewModel.applyQuickAddAmounts() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Apply Quick Add Buttons")
+                }
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
                     text = "Default Input Unit",
                     style = MaterialTheme.typography.titleMedium
                 )
