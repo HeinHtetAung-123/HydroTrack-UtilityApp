@@ -42,6 +42,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.foundation.text.KeyboardOptions
 import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.model.InputUnit
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -101,6 +103,7 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
@@ -226,6 +229,7 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
