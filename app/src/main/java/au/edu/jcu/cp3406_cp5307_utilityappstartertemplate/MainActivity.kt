@@ -36,7 +36,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.runtime.collectAsState
 import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.model.MessageStyle
-
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.foundation.text.KeyboardOptions
+import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.model.InputUnit
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,6 +159,64 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
                 )
             }
         }
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Add Water",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    uiState.quickAddAmountsLitres.forEach { amount ->
+                        Button(
+                            onClick = { viewModel.addWater(amount) },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("+${formatQuickAddAmount(amount)}")
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = uiState.customAmountText,
+                    onValueChange = { viewModel.updateCustomAmountText(it) },
+                    label = {
+                        Text(
+                            text = if (uiState.defaultInputUnit == InputUnit.MILLILITRES) {
+                                "Custom amount in ml"
+                            } else {
+                                "Custom amount in L"
+                            }
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Button(
+                    onClick = { viewModel.addCustomAmount() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Add Custom Amount")
+                }
+
+                OutlinedButton(
+                    onClick = { viewModel.resetIntake() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Reset Today’s Intake")
+                }
+            }
+        }
     }
 }
 @Composable
@@ -196,5 +259,12 @@ fun getProgressMessage(
     return when (messageStyle) {
         MessageStyle.SIMPLE -> simpleMessage
         MessageStyle.MOTIVATIONAL -> motivationalMessage
+    }
+}
+fun formatQuickAddAmount(valueLitres: Double): String {
+    return if (valueLitres < 1.0) {
+        "${(valueLitres * 1000).toInt()}ml"
+    } else {
+        "${String.format("%.2f", valueLitres)}L"
     }
 }
