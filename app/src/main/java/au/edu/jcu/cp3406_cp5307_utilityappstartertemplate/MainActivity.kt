@@ -31,6 +31,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.ui.theme.CP3406_CP5603UtilityAppStarterTemplateTheme
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Card
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.runtime.collectAsState
+import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.model.MessageStyle
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +91,7 @@ fun UtilityApp() {
 
 @Composable
 fun UtilityScreen(viewModel: HydroTrackViewModel) {
-    var counter by remember { mutableIntStateOf(0) }
+    val uiState by viewModel.uiState.collectAsState()
 
     Column(
         modifier = Modifier
@@ -94,15 +99,63 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
             .padding(24.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Utility Screen", style = MaterialTheme.typography.headlineMedium)
-        Text("Counter: $counter", style = MaterialTheme.typography.bodyLarge)
+        Text(
+            text = "HydroTrack",
+            style = MaterialTheme.typography.headlineMedium
+        )
 
-        Button(onClick = { counter++ }) {
-            Text("Increment")
+        Text(
+            text = "Track your daily water intake at a glance.",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Today’s Intake",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    text = "${formatLitres(uiState.currentIntakeLitres)} / ${formatLitres(uiState.dailyGoalLitres)}",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+
+                Text(
+                    text = "${uiState.progressPercentage}% completed",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                LinearProgressIndicator(
+                    progress = { uiState.progress },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Text(
+                    text = if (uiState.isGoalCompleted) {
+                        "Goal completed"
+                    } else {
+                        "${formatLitres(uiState.remainingLitres)} remaining"
+                    },
+                    style = MaterialTheme.typography.bodyLarge
+                )
+
+                Text(
+                    text = getProgressMessage(
+                        percentage = uiState.progressPercentage,
+                        messageStyle = uiState.messageStyle
+                    ),
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
         }
     }
 }
-
 @Composable
 fun SettingsScreen(viewModel: HydroTrackViewModel) {
     Column(
@@ -112,5 +165,36 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
     ) {
         Text("Settings Screen", style = MaterialTheme.typography.headlineMedium)
         Text("This is where you can add toggles or preferences.")
+    }
+}
+fun formatLitres(value: Double): String {
+    return String.format("%.2fL", value)
+}
+
+fun getProgressMessage(
+    percentage: Int,
+    messageStyle: MessageStyle
+): String {
+    val simpleMessage = when {
+        percentage <= 0 -> "Start your hydration goal for today."
+        percentage < 25 -> "Good start."
+        percentage < 50 -> "Steady progress."
+        percentage < 75 -> "More than halfway there."
+        percentage < 100 -> "Almost there."
+        else -> "Goal completed."
+    }
+
+    val motivationalMessage = when {
+        percentage <= 0 -> "Start your hydration goal for today."
+        percentage < 25 -> "Good start. Keep going."
+        percentage < 50 -> "You are making steady progress."
+        percentage < 75 -> "Nice work. You are more than halfway there."
+        percentage < 100 -> "Almost there. Just a little more to go."
+        else -> "Well done! You completed your hydration goal."
+    }
+
+    return when (messageStyle) {
+        MessageStyle.SIMPLE -> simpleMessage
+        MessageStyle.MOTIVATIONAL -> motivationalMessage
     }
 }
