@@ -221,13 +221,146 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
 }
 @Composable
 fun SettingsScreen(viewModel: HydroTrackViewModel) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Column(
-        Modifier
+        modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp), Arrangement.spacedBy(16.dp)
+            .padding(24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Settings Screen", style = MaterialTheme.typography.headlineMedium)
-        Text("This is where you can add toggles or preferences.")
+        Text(
+            text = "Settings",
+            style = MaterialTheme.typography.headlineMedium
+        )
+
+        Text(
+            text = "Adjust your hydration goal and display preferences.",
+            style = MaterialTheme.typography.bodyMedium
+        )
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Daily Goal",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf(1.5, 2.0, 2.5, 3.0).forEach { goal ->
+                        OutlinedButton(
+                            onClick = { viewModel.updateDailyGoal(goal) },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text(formatLitres(goal))
+                        }
+                    }
+                }
+
+                OutlinedTextField(
+                    value = uiState.customGoalText,
+                    onValueChange = { viewModel.updateCustomGoalText(it) },
+                    label = { Text("Custom goal in L") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                Button(
+                    onClick = { viewModel.applyCustomGoal() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Apply Custom Goal")
+                }
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Default Input Unit",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = { viewModel.updateDefaultInputUnit(InputUnit.MILLILITRES) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("ml")
+                    }
+
+                    Button(
+                        onClick = { viewModel.updateDefaultInputUnit(InputUnit.LITRES) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("L")
+                    }
+                }
+
+                Text(
+                    text = "Current input unit: ${
+                        if (uiState.defaultInputUnit == InputUnit.MILLILITRES) "ml" else "L"
+                    }",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Message Style",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        onClick = { viewModel.updateMessageStyle(MessageStyle.SIMPLE) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Simple")
+                    }
+
+                    Button(
+                        onClick = { viewModel.updateMessageStyle(MessageStyle.MOTIVATIONAL) },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Motivational")
+                    }
+                }
+
+                Text(
+                    text = "Current style: ${
+                        if (uiState.messageStyle == MessageStyle.SIMPLE) "Simple" else "Motivational"
+                    }",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
     }
 }
 fun formatLitres(value: Double): String {
