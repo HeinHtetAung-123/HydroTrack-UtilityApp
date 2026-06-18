@@ -8,11 +8,21 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import androidx.lifecycle.viewModelScope
+import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.data.WeatherApiClient
+import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.data.WeatherRepository
+import kotlinx.coroutines.launch
 
 class HydroTrackViewModel : ViewModel() {
-
+    private val weatherRepository = WeatherRepository(
+        weatherApi = WeatherApiClient.weatherApi
+    )
     private val _uiState = MutableStateFlow(HydroTrackUiState())
     val uiState: StateFlow<HydroTrackUiState> = _uiState.asStateFlow()
+
+    init {
+        loadWeatherTip()
+    }
 
     fun addWater(amountLitres: Double) {
         if (amountLitres <= 0) return
@@ -124,6 +134,23 @@ class HydroTrackViewModel : ViewModel() {
         return when {
             amount >= 10 -> amount / 1000
             else -> amount
+        }
+    }
+
+    fun loadWeatherTip() {
+        viewModelScope.launch {
+            _uiState.update {
+                it.copy(isWeatherTipLoading = true)
+            }
+
+            val tip = weatherRepository.getHydrationSuggestion()
+
+            _uiState.update {
+                it.copy(
+                    weatherTip = tip,
+                    isWeatherTipLoading = false
+                )
+            }
         }
     }
 }

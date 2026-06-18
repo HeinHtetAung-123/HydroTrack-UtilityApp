@@ -10,7 +10,9 @@ data class HydroTrackUiState(
     val customGoalText: String = "",
     val quickAddOneText: String = "250",
     val quickAddTwoText: String = "500",
-    val quickAddThreeText: String = "1"
+    val quickAddThreeText: String = "1",
+    val weatherTip: String = "Loading weather hydration tip...",
+    val isWeatherTipLoading: Boolean = true
 ) {
     val progress: Float
         get() = if (dailyGoalLitres > 0) {

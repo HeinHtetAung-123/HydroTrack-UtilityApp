@@ -100,6 +100,36 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Text(
+                    text = "Weather Hydration Tip",
+                    style = MaterialTheme.typography.titleMedium
+                )
+
+                Text(
+                    text = if (uiState.isWeatherTipLoading) {
+                        "Loading weather hydration tip..."
+                    } else {
+                        uiState.weatherTip
+                    },
+                    style = MaterialTheme.typography.bodyMedium
+                )
+
+                OutlinedButton(
+                    onClick = { viewModel.loadWeatherTip() },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Refresh Tip")
+                }
+            }
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
                     text = "Add Water",
                     style = MaterialTheme.typography.titleMedium
                 )
