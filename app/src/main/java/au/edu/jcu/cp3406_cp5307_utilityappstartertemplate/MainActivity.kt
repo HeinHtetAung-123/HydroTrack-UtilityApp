@@ -30,7 +30,10 @@ import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.viewmodel.HydroTrackVi
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Allows the app content to draw behind the system bars for a modern edge-to-edge layout.
         enableEdgeToEdge()
+
         setContent {
             CP3406_CP5603UtilityAppStarterTemplateTheme {
                 UtilityApp()
@@ -49,7 +52,11 @@ fun UtilityAppPreview() {
 
 @Composable
 fun UtilityApp() {
+    // A single shared ViewModel is created at the app level so both tabs can access
+    // the same HydroTrack state. This allows settings changes to update the utility screen.
     val hydroTrackViewModel: HydroTrackViewModel = viewModel()
+
+    // The starter template uses simple state-based tab switching instead of complex navigation.
     var selectedTab by remember { mutableStateOf("Utility") }
 
     Scaffold(
@@ -81,6 +88,7 @@ fun UtilityApp() {
             }
         }
     ) { innerPadding ->
+        // Applies Scaffold padding so screen content does not overlap the bottom navigation bar.
         Box(
             modifier = Modifier.padding(innerPadding)
         ) {

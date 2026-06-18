@@ -1,6 +1,8 @@
 package au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.di.AppContainer
 import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.model.HydroTrackUiState
 import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.model.InputUnit
 import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.model.MessageStyle
@@ -8,19 +10,22 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import androidx.lifecycle.viewModelScope
-import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.di.AppContainer
 import kotlinx.coroutines.launch
 
 class HydroTrackViewModel : ViewModel() {
 
+    // Repository is provided through the app container to keep dependency creation
+    // separate from the ViewModel.
     private val weatherRepository = AppContainer.weatherRepository
 
+    // Mutable state is kept private so only the ViewModel can change app data.
     private val _uiState = MutableStateFlow(HydroTrackUiState())
 
+    // The UI observes this read-only StateFlow and recomposes when values change.
     val uiState: StateFlow<HydroTrackUiState> = _uiState.asStateFlow()
 
     init {
+        // Loads the weather-based hydration tip when the ViewModel is first created.
         loadWeatherTip()
     }
 
@@ -38,6 +43,8 @@ class HydroTrackViewModel : ViewModel() {
         val state = _uiState.value
         val enteredAmount = state.customAmountText.toDoubleOrNull() ?: return
 
+        // The app always stores and displays intake in litres.
+        // Millilitre input is converted before being added to the total.
         val amountInLitres = when (state.defaultInputUnit) {
             InputUnit.MILLILITRES -> enteredAmount / 1000
             InputUnit.LITRES -> enteredAmount
@@ -45,6 +52,7 @@ class HydroTrackViewModel : ViewModel() {
 
         addWater(amountInLitres)
 
+        // Clears the input field after a valid custom amount is added.
         _uiState.update {
             it.copy(customAmountText = "")
         }
@@ -131,6 +139,8 @@ class HydroTrackViewModel : ViewModel() {
     private fun convertQuickAddInputToLitres(value: String): Double {
         val amount = value.toDoubleOrNull() ?: return 0.0
 
+        // Values 10 or above are treated as millilitres, such as 250 or 500.
+        // Smaller values are treated as litres, such as 1 or 1.5.
         return when {
             amount >= 10 -> amount / 1000
             else -> amount
@@ -143,6 +153,8 @@ class HydroTrackViewModel : ViewModel() {
                 it.copy(isWeatherTipLoading = true)
             }
 
+            // Network work is handled by the repository so the ViewModel stays focused
+            // on state management rather than Retrofit implementation details.
             val tip = weatherRepository.getHydrationSuggestion()
 
             _uiState.update {

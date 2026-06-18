@@ -27,6 +27,8 @@ import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.viewmodel.HydroTrackVi
 
 @Composable
 fun UtilityScreen(viewModel: HydroTrackViewModel) {
+    // Collects ViewModel state so the screen automatically updates when intake,
+    // settings, or weather tip values change.
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
@@ -46,6 +48,7 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
             style = MaterialTheme.typography.bodyMedium
         )
 
+        // Main at-a-glance dashboard showing the user's hydration progress.
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -68,6 +71,7 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
                     style = MaterialTheme.typography.bodyLarge
                 )
 
+                // Progress bar is capped at 100% in the UiState to keep the visual display clean.
                 LinearProgressIndicator(
                     progress = { uiState.progress },
                     modifier = Modifier.fillMaxWidth()
@@ -82,6 +86,7 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
                     style = MaterialTheme.typography.bodyLarge
                 )
 
+                // Message changes depending on progress and the selected message style.
                 Text(
                     text = getProgressMessage(
                         percentage = uiState.progressPercentage,
@@ -92,6 +97,7 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
             }
         }
 
+        // Networking feature: displays a hydration suggestion based on current weather data.
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -122,6 +128,7 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
             }
         }
 
+        // Input section for adding water using preset amounts or a custom amount.
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -134,6 +141,7 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
                     style = MaterialTheme.typography.titleMedium
                 )
 
+                // Quick-add buttons are controlled by the Settings screen.
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -148,6 +156,8 @@ fun UtilityScreen(viewModel: HydroTrackViewModel) {
                     }
                 }
 
+                // Custom amount input uses the default unit selected in Settings.
+                // Millilitre input is converted to litres in the ViewModel.
                 OutlinedTextField(
                     value = uiState.customAmountText,
                     onValueChange = { viewModel.updateCustomAmountText(it) },

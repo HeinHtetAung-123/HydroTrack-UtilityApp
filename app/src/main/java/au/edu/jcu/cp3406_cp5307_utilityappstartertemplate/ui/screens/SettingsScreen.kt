@@ -27,6 +27,8 @@ import au.edu.jcu.cp3406_cp5307_utilityappstartertemplate.viewmodel.HydroTrackVi
 
 @Composable
 fun SettingsScreen(viewModel: HydroTrackViewModel) {
+    // Collects the same shared state used by UtilityScreen.
+    // This allows settings changes to update the main dashboard immediately.
     val uiState by viewModel.uiState.collectAsState()
 
     Column(
@@ -46,6 +48,7 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
             style = MaterialTheme.typography.bodyMedium
         )
 
+        // Daily goal settings control the target shown in the Utility dashboard.
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -58,6 +61,7 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
                     style = MaterialTheme.typography.titleMedium
                 )
 
+                // Preset goal buttons provide quick configuration for common hydration targets.
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -72,6 +76,7 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
                     }
                 }
 
+                // Custom goal input lets users set a goal that is not part of the presets.
                 OutlinedTextField(
                     value = uiState.customGoalText,
                     onValueChange = { viewModel.updateCustomGoalText(it) },
@@ -89,6 +94,7 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
             }
         }
 
+        // Quick-add settings control the three quick-add buttons on the Utility screen.
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -135,6 +141,7 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
                     )
                 }
 
+                // Applies the edited quick-add values to the Utility screen buttons.
                 Button(
                     onClick = { viewModel.applyQuickAddAmounts() },
                     modifier = Modifier.fillMaxWidth()
@@ -144,6 +151,7 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
             }
         }
 
+        // Default input unit controls how the custom amount field on the Utility screen is interpreted.
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -184,6 +192,7 @@ fun SettingsScreen(viewModel: HydroTrackViewModel) {
             }
         }
 
+        // Message style changes the tone of the progress message in the dashboard.
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
